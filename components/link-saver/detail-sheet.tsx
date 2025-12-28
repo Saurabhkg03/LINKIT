@@ -29,7 +29,7 @@ export function DetailSheet({ item, onClose, onDelete, onRestore }: DetailSheetP
                 />
                 <motion.div
                     layoutId={item.id}
-                    className="relative w-full max-w-2xl bg-white dark:bg-[#1c1c1e] rounded-[32px] overflow-hidden shadow-2xl flex flex-col max-h-[85vh] border border-white/10"
+                    className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden shadow-2xl flex flex-col max-h-[85vh] border border-white/10"
                 >
                     {/* Reader Mode Overlay */}
                     <AnimatePresence>
@@ -62,7 +62,9 @@ export function DetailSheet({ item, onClose, onDelete, onRestore }: DetailSheetP
                         {item.image ? (
                             <img src={item.image} className="w-full h-full object-cover" alt={item.title} />
                         ) : (
-                            <div className={cn("w-full h-full bg-linear-to-br", item.gradient)} />
+                            <div className={cn("w-full h-full flex items-center justify-center", item.theme?.background || "bg-slate-100 dark:bg-slate-800")}>
+                                <span className={cn("text-6xl font-bold opacity-20", item.theme?.text || "text-slate-900 dark:text-slate-100")}>{item.domain?.substring(0, 1).toUpperCase()}</span>
+                            </div>
                         )}
                         <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full bg-black/50 text-white backdrop-blur-md hover:bg-black/70 transition-colors z-10"><X size={20} /></button>
 

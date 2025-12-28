@@ -35,41 +35,102 @@ const getAutoTags = (url: string) => {
     return tags.length > 0 ? tags : ['Web'];
 };
 
-const getGradient = (domain: string) => {
-    if (domain.includes('youtube')) return "from-red-500/20 via-red-900/20 to-transparent";
-    if (domain.includes('spotify')) return "from-green-500/20 via-green-900/20 to-transparent";
-    if (domain.includes('github')) return "from-slate-500/20 via-slate-900/20 to-transparent";
-    return "from-blue-500/20 via-blue-900/20 to-transparent";
+const getDomainTheme = (domain: string): any => { // Returns ThemeStyles (using any to avoid circular dependency import issues if simple)
+    const d = domain.toLowerCase();
+
+    // 1. YouTube / Red
+    if (d.includes('youtube') || d.includes('netflix') || d.includes('cnn')) {
+        return {
+            background: "bg-red-50 dark:bg-red-950/30",
+            text: "text-red-950 dark:text-red-50",
+            description: "text-red-700/80 dark:text-red-200/70",
+            border: "border-red-100 dark:border-red-900/50",
+            accent: "text-red-600 dark:text-red-400",
+            iconBg: "bg-red-100 dark:bg-red-900/50"
+        };
+    }
+
+    // 2. Spotify / Green
+    if (d.includes('spotify') || d.includes('medium') || d.includes('whatsapp')) {
+        return {
+            background: "bg-green-50 dark:bg-green-950/30",
+            text: "text-green-950 dark:text-green-50",
+            description: "text-green-700/80 dark:text-green-200/70",
+            border: "border-green-100 dark:border-green-900/50",
+            accent: "text-green-600 dark:text-green-400",
+            iconBg: "bg-green-100 dark:bg-green-900/50"
+        };
+    }
+
+    // 3. GitHub / Code / Slate
+    if (d.includes('github') || d.includes('stackoverflow') || d.includes('vercel')) {
+        return {
+            background: "bg-slate-100 dark:bg-slate-800",
+            text: "text-slate-900 dark:text-slate-50",
+            description: "text-slate-600 dark:text-slate-400",
+            border: "border-slate-200 dark:border-slate-700",
+            accent: "text-slate-700 dark:text-slate-300",
+            iconBg: "bg-white dark:bg-black/20"
+        };
+    }
+
+    // 4. Amazon / Shopping / Orange
+    if (d.includes('amazon') || d.includes('etsy')) {
+        return {
+            background: "bg-orange-50 dark:bg-orange-950/30",
+            text: "text-orange-950 dark:text-orange-50",
+            description: "text-orange-700/80 dark:text-orange-200/70",
+            border: "border-orange-100 dark:border-orange-900/50",
+            accent: "text-orange-600 dark:text-orange-400",
+            iconBg: "bg-orange-100 dark:bg-orange-900/50"
+        };
+    }
+
+    // Default: Blue (Tech/General)
+    return {
+        background: "bg-white dark:bg-slate-900", // Standard card background
+        text: "text-slate-900 dark:text-slate-50",
+        description: "text-slate-500 dark:text-slate-400",
+        border: "border-slate-100 dark:border-slate-800",
+        accent: "text-blue-600 dark:text-blue-400",
+        iconBg: "bg-slate-50 dark:bg-slate-800"
+    };
 };
 
 const fetchMetadata = async (url: string): Promise<PreviewData> => {
     try {
         const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
         const json = await response.json();
+
+        let domain = "unknown";
+        try { domain = new URL(url).hostname.replace('www.', ''); } catch (e) { /* ignore */ }
+
         if (json.status === 'success') {
             const { title, description, image, logo, publisher } = json.data;
-            const domain = publisher || new URL(url).hostname.replace('www.', '');
+            const finalDomain = publisher || domain;
             return {
-                title: title || domain,
-                description: description,
+                title: title || finalDomain,
+                description: description || undefined,
                 image: image?.url || null,
                 icon: logo?.url || null,
-                domain: domain,
-                gradient: getGradient(domain.toLowerCase()),
-                tags: getAutoTags(url)
+                domain: finalDomain,
+                tags: getAutoTags(url),
+                theme: getDomainTheme(finalDomain)
             };
         }
         throw new Error('Failed');
     } catch (error) {
         let domain = "unknown";
         try { domain = new URL(url).hostname; } catch (e) { /* ignore */ }
+
         return {
             title: domain,
+            description: undefined,
             image: null,
             icon: null,
             domain: domain,
-            gradient: getGradient(domain),
-            tags: getAutoTags(url)
+            tags: getAutoTags(url),
+            theme: getDomainTheme(domain)
         };
     }
 }

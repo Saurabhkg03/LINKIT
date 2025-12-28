@@ -1,3 +1,12 @@
+export interface ThemeStyles {
+    background: string;
+    text: string;
+    description: string;
+    border: string;
+    accent: string;
+    iconBg: string;
+}
+
 export interface LinkItem {
     id: string;
     type: "link" | "stack" | "vault";
@@ -7,7 +16,8 @@ export interface LinkItem {
     image?: string | null;
     icon?: string | null;
     tags?: string[];
-    gradient?: string;
+    // Deprecated: gradient
+    theme?: ThemeStyles; // Now optional to handle legacy or missing data
     description?: string;
     count?: number;
 
@@ -26,6 +36,6 @@ export interface PreviewData {
     image?: string | null;
     icon?: string | null;
     domain?: string;
-    gradient?: string;
+    theme?: ThemeStyles;
     tags?: string[];
 }

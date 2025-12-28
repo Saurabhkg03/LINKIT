@@ -32,20 +32,24 @@ export function LinkCard({
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
-            className="group relative h-[340px] rounded-[32px] overflow-hidden cursor-pointer bg-white dark:bg-zinc-900 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-slate-100 dark:border-zinc-800 flex flex-col"
+            className={cn(
+                "group relative h-[340px] rounded-[32px] overflow-hidden cursor-pointer shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col border",
+                item.theme?.background || "bg-white dark:bg-slate-900",
+                item.theme?.border || "border-slate-100 dark:border-slate-800"
+            )}
         >
-            {/* Ambient Background Tint */}
-            <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none bg-linear-to-br", item.gradient || "from-blue-500 to-purple-500")} />
             {/* Image Area */}
             <div className="h-[50%] w-full relative overflow-hidden bg-slate-100 dark:bg-zinc-800">
                 {item.image ? (
                     <img
                         src={item.image}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        alt={item.title}
+                        alt={item.title || "Link"}
                     />
                 ) : (
-                    <div className={cn("w-full h-full bg-linear-to-br", item.gradient || "from-slate-200 to-slate-300")} />
+                    <div className={cn("w-full h-full flex items-center justify-center", item.theme?.background || "bg-slate-100 dark:bg-slate-800")}>
+                        <span className={cn("text-4xl font-bold opacity-20", item.theme?.text || "text-slate-900 dark:text-slate-100")}>{item.domain?.substring(0, 1).toUpperCase()}</span>
+                    </div>
                 )}
 
                 {/* Favorite Indicator (Top Left) */}
@@ -60,28 +64,25 @@ export function LinkCard({
                         <ExternalLink size={12} />
                     </div>
                 </div>
-
-                {/* Glow Effect (Fake) */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
 
             {/* Content Area */}
-            <div className="p-5 flex flex-col flex-1 justify-between bg-white dark:bg-zinc-900 z-10">
+            <div className={cn("p-5 flex flex-col flex-1 justify-between z-10", item.theme?.background || "bg-white dark:bg-slate-900")}>
                 <div>
                     <div className="flex items-center gap-2 mb-1.5">
                         {item.tags?.[0] && (
-                            <span className="text-[10px] uppercase font-bold text-blue-500 tracking-wider bg-blue-50 dark:bg-blue-900/20 px-1.5 py-0.5 rounded-md">
+                            <span className={cn("text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md", item.theme?.accent || "text-blue-600", "bg-white/50 dark:bg-black/20")}>
                                 {item.tags[0]}
                             </span>
                         )}
-                        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest truncate">
+                        <span className={cn("text-[10px] font-medium uppercase tracking-widest truncate", item.theme?.accent || "text-slate-500")}>
                             {item.domain}
                         </span>
                     </div>
-                    <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100 leading-tight line-clamp-2 mb-1">
+                    <h3 className={cn("font-bold text-lg leading-tight line-clamp-2 mb-1", item.theme?.text || "text-slate-900 dark:text-slate-50")}>
                         {item.title}
                     </h3>
-                    <p className="text-xs text-slate-500 line-clamp-1 opacity-70 font-medium">
+                    <p className={cn("text-xs line-clamp-1 font-medium", item.theme?.description || "text-slate-500 dark:text-slate-400")}>
                         {item.description || "No description"}
                     </p>
                 </div>

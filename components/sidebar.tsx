@@ -6,8 +6,8 @@ import { useAuth } from "@/components/auth-provider"
 import { useTheme } from "next-themes"
 import { useRouter, useSearchParams } from "next/navigation"
 import {
-    Folder, Star, Trash2, Archive, Settings, LogOut,
-    Moon, Sun, ChevronDown, User, Plus,
+    Star, Trash2, Archive, LogOut,
+    Moon, Sun, User,
     LayoutGrid, FileText, Bell, Tag
 } from "lucide-react"
 
@@ -31,6 +31,12 @@ export function Sidebar({ className }: SidebarProps) {
         if (tag) params.set('tag', tag);
         router.push(`/?${params.toString()}`);
     };
+
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     return (
         <div className={cn("pb-12 min-h-screen w-64 flex flex-col glass-sidebar", className)}>
@@ -140,20 +146,22 @@ export function Sidebar({ className }: SidebarProps) {
             <div className="p-4 border-t border-(--border)">
                 <div className="flex items-center justify-between p-2 rounded-lg bg-(--background)/50 border border-(--border)">
                     <span className="text-xs font-medium pl-1 opacity-70">Appearance</span>
-                    <div className="flex bg-(--background) rounded-md p-0.5 border border-(--border)">
-                        <button
-                            onClick={() => setTheme("light")}
-                            className={cn("p-1.5 rounded-sm transition-all", theme === 'light' ? 'bg-white shadow-sm' : 'hover:bg-black/5')}
-                        >
-                            <Sun size={14} />
-                        </button>
-                        <button
-                            onClick={() => setTheme("dark")}
-                            className={cn("p-1.5 rounded-sm transition-all", theme === 'dark' ? 'bg-slate-700 text-white shadow-sm' : 'hover:bg-black/5')}
-                        >
-                            <Moon size={14} />
-                        </button>
-                    </div>
+                    {mounted && (
+                        <div className="flex bg-(--background) rounded-md p-0.5 border border-(--border)">
+                            <button
+                                onClick={() => setTheme("light")}
+                                className={cn("p-1.5 rounded-sm transition-all", theme === 'light' ? 'bg-white shadow-sm' : 'hover:bg-black/5')}
+                            >
+                                <Sun size={14} />
+                            </button>
+                            <button
+                                onClick={() => setTheme("dark")}
+                                className={cn("p-1.5 rounded-sm transition-all", theme === 'dark' ? 'bg-slate-700 text-white shadow-sm' : 'hover:bg-black/5')}
+                            >
+                                <Moon size={14} />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

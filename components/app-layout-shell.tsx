@@ -1,24 +1,28 @@
 "use client"
 
-import * as React from "react"
+import { Suspense, useState, ReactNode } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { Menu } from "lucide-react"
 
-export function AppLayoutShell({ children }: { children: React.ReactNode }) {
-    const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+export function AppLayoutShell({ children }: { children: ReactNode }) {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
         <div className="flex h-screen bg-(--background) overflow-hidden">
             {/* Desktop Sidebar */}
             <div className="hidden md:block shrink-0">
-                <Sidebar />
+                <Suspense fallback={<div className="w-64 h-full bg-(--sidebar) border-r border-(--border)" />}>
+                    <Sidebar />
+                </Suspense>
             </div>
 
             {/* Mobile Sidebar (Drawer) */}
             {isSidebarOpen && (
                 <div className="fixed inset-0 z-50 flex md:hidden">
                     <div className="fixed inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />
-                    <Sidebar className="relative z-50 h-full w-72 animate-in slide-in-from-left duration-300" />
+                    <Suspense fallback={<div className="relative z-50 h-full w-72 bg-(--sidebar)" />}>
+                        <Sidebar className="relative z-50 h-full w-72 animate-in slide-in-from-left duration-300" />
+                    </Suspense>
                 </div>
             )}
 
